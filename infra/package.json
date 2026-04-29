@@ -7,7 +7,7 @@
     "bootstrap": "npx cdk bootstrap",
     "synth": "cdk synth",
     "deploy:all": "cdk deploy -all",
-    "deplot:product": "cdk deploy ProductServiceStack",
+    "deploy:product": "cdk deploy ProductServiceStack",
     "destroy": "cdk destroy",
     "diff": "cdk diff"
   },
