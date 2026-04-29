@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: Product Service
+  description: Book store service
+  version: 1.0.0
+
+servers:
+  - url: https://{apiId}.execute-api.eu-north-1.amazonaws.com/
+    description: AWS Lambda Proxy
+
+tags:
+  - name: Products
+
+paths:
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Get list of available books
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+
+  /products/{productId}:
+    get:
+      tags:
+        - Products
+      summary: Get book by id
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        description:
+          type: string
