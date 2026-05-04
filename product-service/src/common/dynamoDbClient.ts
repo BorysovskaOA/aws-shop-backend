@@ -7,4 +7,8 @@ export const Table = {
 };
 
 const client = new DynamoDBClient();
-export const dynamoDBClient = DynamoDBDocumentClient.from(client);
+export const dynamoDBClient = DynamoDBDocumentClient.from(client, {
+  marshallOptions: {
+    removeUndefinedValues: true,
+  },
+});

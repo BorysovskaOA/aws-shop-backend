@@ -1,7 +1,7 @@
 export interface Book {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   price: number;
   count: number;
 }
@@ -9,7 +9,7 @@ export interface Book {
 export interface BookDB {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   price: number;
 }
 

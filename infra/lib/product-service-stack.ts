@@ -86,6 +86,21 @@ export class ProductServiceStack extends cdk.Stack {
     productsTable.grantReadData(getProductById);
     stocksTable.grantReadData(getProductById);
 
+    const createProduct = new NodejsFunction(this, "CreateProduct", {
+      ...sharedLambdaProps,
+      entry: path.join(
+        __dirname,
+        "../../product-service/src/functions/createProduct/index.ts",
+      ),
+      handler: "createProduct",
+      logGroup: new logs.LogGroup(this, "CreateProductLogs", {
+        retention: logs.RetentionDays.ONE_WEEK,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      }),
+    });
+    productsTable.grantReadData(createProduct);
+    stocksTable.grantReadData(createProduct);
+
     const httpApi = new apigw.HttpApi(this, "ProductsApi", {
       apiName: "Product Service",
       createDefaultStage: false,
@@ -115,6 +130,15 @@ export class ProductServiceStack extends cdk.Stack {
       integration: new HttpLambdaIntegration(
         "GetProductsListIntegration",
         getProductsList,
+      ),
+    });
+
+    httpApi.addRoutes({
+      path: "/products",
+      methods: [apigw.HttpMethod.POST],
+      integration: new HttpLambdaIntegration(
+        "CreateProductIntegration",
+        createProduct,
       ),
     });
 

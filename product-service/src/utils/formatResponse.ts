@@ -2,7 +2,7 @@ import http from "node:http";
 import { APIGatewayProxyResult } from "aws-lambda";
 
 export const formatErrorResponse = (
-  description: string,
+  description: any,
   statusCode: number,
 ): APIGatewayProxyResult => {
   return {
