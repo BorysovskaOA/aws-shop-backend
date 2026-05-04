@@ -4,3 +4,8 @@ export interface Book {
   description: string;
   price: number;
 }
+
+export interface BookInStock {
+  productId: string;
+  count: number;
+}
