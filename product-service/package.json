@@ -4,8 +4,8 @@
   "author": "BorysovskaOA",
   "scripts": {
     "seed": "tsx seeds/products.seed.ts",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest run --silent",
+    "test:watch": "vitest --silent=passed-only"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.161",

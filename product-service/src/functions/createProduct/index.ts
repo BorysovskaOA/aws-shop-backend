@@ -22,10 +22,11 @@ const CreateProductSchema = z.object({
 
 export const createProduct = withCatchError(
   async (event: APIGatewayProxyEvent) => {
+    console.log("Create product", event);
+
     const body = JSON.parse(event.body || "{}");
 
     const validation = CreateProductSchema.safeParse(body);
-
     if (!validation.success) {
       return formatErrorResponse(
         z.treeifyError(validation.error).properties,

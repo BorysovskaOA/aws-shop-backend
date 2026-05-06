@@ -13,8 +13,9 @@ const UUID_REGEX =
 
 export const getProductById = withCatchError(
   async (event: APIGatewayProxyEvent) => {
-    const productId = event.pathParameters?.productId;
+    console.log("Get product by id", event);
 
+    const productId = event.pathParameters?.productId;
     if (!productId || !UUID_REGEX.test(productId)) {
       return formatErrorResponse(`Invalid format ${productId}`, 400);
     }

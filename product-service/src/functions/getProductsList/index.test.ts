@@ -41,7 +41,7 @@ describe("Get Products List Handler", () => {
       Items: [stock],
     } as any);
 
-    const response = await getProductsList();
+    const response = await getProductsList({} as any);
 
     expect(response.statusCode).toBe(200);
     const body = JSON.parse(response.body);
@@ -64,7 +64,7 @@ describe("Get Products List Handler", () => {
       Items: [],
     } as any);
 
-    const response = await getProductsList();
+    const response = await getProductsList({} as any);
 
     expect(response.statusCode).toBe(200);
     const body = JSON.parse(response.body);
