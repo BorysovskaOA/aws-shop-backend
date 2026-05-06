@@ -77,7 +77,7 @@ describe("Create Product Handler", () => {
 
     expect(response.statusCode).toBe(400);
     const { description } = JSON.parse(response.body);
-    expect(description.properties).toEqual({
+    expect(description).toEqual({
       title: { errors: ["Invalid input: expected string, received number"] },
       description: {
         errors: ["Invalid input: expected string, received number"],

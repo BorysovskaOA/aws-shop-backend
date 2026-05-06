@@ -27,7 +27,10 @@ export const createProduct = withCatchError(
     const validation = CreateProductSchema.safeParse(body);
 
     if (!validation.success) {
-      return formatErrorResponse(z.treeifyError(validation.error), 400);
+      return formatErrorResponse(
+        z.treeifyError(validation.error).properties,
+        400,
+      );
     }
 
     const { title, description, price, count } = validation.data;
