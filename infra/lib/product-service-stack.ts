@@ -98,8 +98,8 @@ export class ProductServiceStack extends cdk.Stack {
         removalPolicy: cdk.RemovalPolicy.DESTROY,
       }),
     });
-    productsTable.grantReadData(createProduct);
-    stocksTable.grantReadData(createProduct);
+    productsTable.grantWriteData(createProduct);
+    stocksTable.grantWriteData(createProduct);
 
     const httpApi = new apigw.HttpApi(this, "ProductsApi", {
       apiName: "Product Service",

@@ -16,7 +16,7 @@ import {
 const CreateProductSchema = z.object({
   title: z.string().min(3),
   description: z.string().optional(),
-  price: z.number().int().positive().default(0),
+  price: z.number().int().positive(),
   count: z.number().int().nonnegative().default(0),
 });
 
