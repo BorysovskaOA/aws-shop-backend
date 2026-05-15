@@ -5,11 +5,13 @@
   "author": "BorysovskaOA",
   "scripts": {
     "test": "npm run test --workspaces --if-present",
-    "deploy:all": "npm run deploy:all -w infra",
-    "deploy:product": "npm run deploy:product -w infra"
+    "bootstrap": "npx cdk bootstrap --workspaces --if-present",
+    "synth": "cdk synth --workspaces --if-present",
+    "deploy": "cdk deploy --workspaces --if-present",
+    "destroy": "cdk destroy --workspaces --if-present",
+    "diff": "cdk diff --workspaces --if-present"
   },
   "workspaces": [
-    "infra",
     "product-service"
   ]
 }
