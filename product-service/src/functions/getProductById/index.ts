@@ -1,28 +1,49 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { products } from "../../products";
+import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import {
   formatErrorResponse,
   formatSuccessResponse,
 } from "../../utils/formatResponse";
 import { withCatchError } from "../../utils/withCatchError.js";
+import { dynamoDBClient, Table } from "../../common/dynamoDbClient";
+import { Book, BookDB, BookInStockDB } from "../../interfaces";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const getProductById = withCatchError(
   async (event: APIGatewayProxyEvent) => {
-    const productId = event.pathParameters?.productId;
+    console.log("Get product by id", event);
 
+    const productId = event.pathParameters?.productId;
     if (!productId || !UUID_REGEX.test(productId)) {
       return formatErrorResponse(`Invalid format ${productId}`, 400);
     }
 
-    const product = products.find((p) => p.id === productId);
+    const [productsResponse, stocksResponse] = await Promise.all([
+      dynamoDBClient.send(
+        new GetCommand({ TableName: Table.Products, Key: { id: productId } }),
+      ),
+      dynamoDBClient.send(
+        new GetCommand({
+          TableName: Table.Stocks,
+          Key: { product_id: productId },
+        }),
+      ),
+    ]);
 
-    if (!product) {
+    const book = productsResponse.Item as BookDB;
+    const bookInStock = stocksResponse.Item as BookInStockDB;
+
+    if (!book) {
       return formatErrorResponse(`Product ${productId} is not found`, 404);
     }
 
-    return formatSuccessResponse(product);
+    const result: Book = {
+      ...book,
+      count: bookInStock?.count ?? 0,
+    };
+
+    return formatSuccessResponse(result);
   },
 );

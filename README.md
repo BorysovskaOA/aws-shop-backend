@@ -45,3 +45,13 @@ Deploys the infrastructure resources needed for product-service stack only
 ### `destroy`
 
 Removes all AWS resources associated with the stacks to ensure no infrastructure is left behind.
+
+## Available product-service scripts:
+
+### `test`, `test:watch`
+
+Runs tests for all functions.
+
+### `seed`
+
+Populates tests products to dynamo db.
