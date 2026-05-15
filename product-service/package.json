@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "author": "BorysovskaOA",
   "scripts": {
+    "cdk": "cdk",
+    "bootstrap": "npx cdk bootstrap",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy",
+    "destroy": "cdk destroy",
+    "diff": "cdk diff",
     "seed": "tsx seeds/products.seed.ts",
     "test": "vitest run --silent",
     "test:watch": "vitest --silent=passed-only"
@@ -10,14 +16,19 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.161",
     "@types/node": "^25.6.0",
+    "aws-cdk": "^2.1119.0",
+    "esbuild": "^0.28.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5"
   },
   "dependencies": {
+    "aws-cdk-lib": "^2.251.0",
     "@aws-sdk/client-dynamodb": "^3.1041.0",
     "@aws-sdk/lib-dynamodb": "^3.1041.0",
+    "constructs": "^10.6.0",
     "dotenv": "^17.4.2",
+    "source-map-support": "^0.5.21",
     "zod": "^4.4.3"
   }
 }

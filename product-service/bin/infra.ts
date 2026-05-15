@@ -1,6 +1,6 @@
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib/core";
-import { ProductServiceStack } from "../lib/product-service-stack";
+import { ProductServiceStack } from "../lib/main.stack";
 
 const app = new cdk.App();
 

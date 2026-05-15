@@ -12,15 +12,9 @@ Project is deployed on: https://d180fy39z34bng.cloudfront.net
 
 Runs tests in all workspaces if test command is defined
 
-### `deploy:all`
+### `deploy`
 
 Deploys the infrastructure resources to your AWS account based on the defined stacks.
-
-### `deploy:product`
-
-Deploys the infrastructure resources needed for product-service stack only
-
-## Available infra scripts:
 
 ### `bootstrap`
 
@@ -34,21 +28,13 @@ Compares the specified stack and its dependencies with the deployed stack. Use t
 
 Generates the CloudFormation template and allows you to inspect the final infrastructure definition before it is actually deployed to your account.
 
-### `deploy:all`
-
-Deploys the infrastructure resources to your AWS account based on the defined stacks.
-
-### `deploy:product`
-
-Deploys the infrastructure resources needed for product-service stack only
-
 ### `destroy`
 
 Removes all AWS resources associated with the stacks to ensure no infrastructure is left behind.
 
 ## Available product-service scripts:
 
-### `test`, `test:watch`
+### `test:watch`
 
 Runs tests for all functions.
 
