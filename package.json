@@ -1,0 +1,15 @@
+{
+  "name": "aws-shop-backend",
+  "version": "1.0.0",
+  "description": "Monorepo project for AWS shop backend",
+  "author": "BorysovskaOA",
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "deploy:all": "npm run deploy:all -w infra",
+    "deploy:product": "npm run deploy:product -w infra"
+  },
+  "workspaces": [
+    "infra",
+    "product-service"
+  ]
+}
