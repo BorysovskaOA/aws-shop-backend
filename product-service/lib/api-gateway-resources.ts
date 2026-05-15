@@ -19,7 +19,11 @@ export class ApiGatewayResources extends Construct {
       apiName: "Product Service",
       createDefaultStage: false,
       corsPreflight: {
-        allowMethods: [apigw.CorsHttpMethod.GET],
+        allowMethods: [
+          apigw.CorsHttpMethod.GET,
+          apigw.CorsHttpMethod.POST,
+          apigw.CorsHttpMethod.OPTIONS,
+        ],
         allowOrigins: [
           "http://localhost:3000",
           "https://d180fy39z34bng.cloudfront.net",
