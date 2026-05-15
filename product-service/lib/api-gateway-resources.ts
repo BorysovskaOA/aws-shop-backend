@@ -20,7 +20,10 @@ export class ApiGatewayResources extends Construct {
       createDefaultStage: false,
       corsPreflight: {
         allowMethods: [apigw.CorsHttpMethod.GET],
-        allowOrigins: ["http://localhost:3000", "https://cloudfront.net"],
+        allowOrigins: [
+          "http://localhost:3000",
+          "https://d180fy39z34bng.cloudfront.net",
+        ],
         allowHeaders: ["Content-Type", "Authorization"],
       },
     });
