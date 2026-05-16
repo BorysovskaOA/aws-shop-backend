@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: Import Service
+  description: Import books service
+  version: 1.0.0
+
+servers:
+  - url: https://qyy6zuiyrl.execute-api.eu-north-1.amazonaws.com
+    description: AWS Lambda Proxy
+
+tags:
+  - name: Imports
+
+paths:
+  /import:
+    get:
+      tags:
+        - Imports
+      summary: Created secure api to upload file
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success response, returns a secure link
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+        "400":
+          description: Fail when input data is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Fails when unexpected error happened on server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        description:
+          type: string
