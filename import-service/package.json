@@ -10,7 +10,7 @@
     "destroy": "cdk destroy",
     "diff": "cdk diff",
     "seed": "tsx seeds/products.seed.ts",
-    "test": "vitest run --silent=passed-only",
+    "test": "vitest run --silent",
     "test:watch": "vitest --silent=passed-only"
   },
   "devDependencies": {
