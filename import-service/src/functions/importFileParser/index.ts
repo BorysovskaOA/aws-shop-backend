@@ -5,14 +5,19 @@ import {
   CopyObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
-import { withCatchError } from "../../utils/withCatchError";
 import { Readable } from "node:stream";
 import csvParser from "csv-parser";
+import z from "zod";
 
 const s3Client = new S3Client();
-const PARSED_FOLDER = process.env.PARSED_FOLDER;
+const CreateProductSchema = z.object({
+  title: z.string().min(3),
+  description: z.string().optional(),
+  price: z.coerce.number().int().positive(),
+  count: z.coerce.number().int().nonnegative().default(0),
+});
 
-export const importFileParser = withCatchError(async (event: S3Event) => {
+export const importFileParser = async (event: S3Event) => {
   console.log("Import file parser", event);
 
   const processResource = async (record: S3EventRecord) => {
@@ -36,25 +41,22 @@ export const importFileParser = withCatchError(async (event: S3Event) => {
       const csvStream = s3Stream.pipe(csvParser());
 
       for await (const row of csvStream) {
+        const validation = CreateProductSchema.safeParse(row);
+        if (!validation.success) {
+          throw new Error(
+            `Invalid product: ${JSON.stringify(z.treeifyError(validation.error).properties)}`,
+          );
+        }
         // Currently just log that item - will be processed by next task
         lines++;
-        console.log(`Line #${lines}:`, JSON.stringify(row));
+        console.log(`Line #${lines}:`, JSON.stringify(validation.data));
       }
 
       console.log(`Processed file: ${file} - ${lines} lines processed`);
-    } catch (error) {
-      console.log(
-        `Failed to process file: ${file} - ${lines} lines already processed`,
-      );
-      throw error;
-    }
+      const fileName = file.split("/").pop();
+      const destinationKey = `${process.env.PARSED_FOLDER}/${fileName}`;
 
-    const fileName = file.split("/").pop();
-    const destinationKey = `${PARSED_FOLDER}/${fileName}`;
-
-    console.log(`Moving ${file} to ${destinationKey}...`);
-
-    try {
+      console.log(`Moving ${file} to ${destinationKey}...`);
       await s3Client.send(
         new CopyObjectCommand({
           Bucket: bucket,
@@ -72,9 +74,33 @@ export const importFileParser = withCatchError(async (event: S3Event) => {
 
       console.log(`Successfully moved file to: ${destinationKey}`);
     } catch (error) {
-      console.log(`Failed to move file ${file}`, error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      return { file, lines, error: err };
     }
+    return { file, lines };
   };
 
-  await Promise.allSettled(event.Records.map((r) => processResource(r)));
-});
+  const results = await Promise.allSettled(
+    event.Records.map((r) => processResource(r)),
+  );
+
+  if (!results.some((r) => r.status !== "rejected" && !!r.value.error)) {
+    console.log("All records processed");
+  } else {
+    results.forEach((r) => {
+      if (r.status !== "fulfilled") {
+        console.log("Unexpected error", r.reason);
+        return;
+      }
+
+      if (r.value.error) {
+        const err = r.value.error as Error;
+        console.log(
+          `Failed to process file: ${r.value.file}, ${r.value.lines} processed`,
+          err.message,
+        );
+        console.error(err.stack);
+      }
+    });
+  }
+};

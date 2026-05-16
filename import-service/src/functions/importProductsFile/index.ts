@@ -8,11 +8,9 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client } from "@aws-sdk/client-s3";
 
-const s3Client = new S3Client({});
+const s3Client = new S3Client();
 const IMPORTED_FILE_EXTENTION = ".csv";
 const IMPORTED_FILE_CONTENT_TYPE = "text/csv";
-const BUCKET_NAME = process.env.BUCKET_NAME;
-const UPLOADED_FOLDER = process.env.UPLOADED_FOLDER;
 const SIGNED_URL_EXPIRES_IN_MS = 1000;
 
 export const importProductsFile = withCatchError(
@@ -25,10 +23,12 @@ export const importProductsFile = withCatchError(
     }
 
     const command = new PutObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: `${UPLOADED_FOLDER}/${fileName}`,
+      Bucket: process.env.BUCKET_NAME,
+      Key: `${process.env.UPLOADED_FOLDER}/${fileName}`,
       ContentType: IMPORTED_FILE_CONTENT_TYPE,
     });
+
+    console.log(process.env.BUCKET_NAME, process.env.UPLOADED_FOLDER);
 
     const url = await getSignedUrl(s3Client, command, {
       expiresIn: SIGNED_URL_EXPIRES_IN_MS,
