@@ -5,13 +5,14 @@
   "author": "BorysovskaOA",
   "scripts": {
     "test": "npm run test --workspaces --if-present",
-    "bootstrap": "npx cdk bootstrap --workspaces --if-present",
-    "synth": "cdk synth --workspaces --if-present",
-    "deploy": "cdk deploy --workspaces --if-present",
-    "destroy": "cdk destroy --workspaces --if-present",
-    "diff": "cdk diff --workspaces --if-present"
+    "bootstrap": "npm run bootstrap --workspaces --if-present",
+    "synth": "npm run synth --workspaces --if-present",
+    "deploy": "npm run deploy --workspaces --if-present",
+    "destroy": "npm run destroy --workspaces --if-present",
+    "diff": "npm run diff --workspaces --if-present"
   },
   "workspaces": [
+    "import-service",
     "product-service"
   ]
 }
