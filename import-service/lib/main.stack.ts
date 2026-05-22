@@ -1,19 +1,40 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import * as dotenv from "dotenv";
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { S3Resources } from "./s3-resources";
 import { LambdaResources } from "./lambda-resources";
 import { ApiGatewayResources } from "./api-gateway-resources";
+import { SqsResources } from "./sqs-resources";
+import { SnsResources } from "./sns-resources";
+import { DatabaseResources } from "./database-resources";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 export class ImportServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const s3Layer = new S3Resources(this, "S3Layer");
+    const sqsLayer = new SqsResources(this, "SQSLayer");
+    const snsLayer = new SnsResources(this, "SNSLayer");
+    const databaseLayer = new DatabaseResources(this, "DatabaseLayer", {
+      productsTable: process.env.PRODUCTS_TABLE as string,
+      stocksTable: process.env.STOCKS_TABLE as string,
+    });
 
     const lambdaLayer = new LambdaResources(this, "LambdaLayer", {
       bucket: s3Layer.s3Bucket,
       uploadedFolder: s3Layer.uploadedFolder,
       parsedFolder: s3Layer.parsedFolder,
+      queue: sqsLayer.queue,
+      topic: snsLayer.topic,
+      productsTable: databaseLayer.productsTable,
+      stocksTable: databaseLayer.stocksTable,
     });
 
     const apiGatewayLayer = new ApiGatewayResources(this, "ApiGatewayLayer", {

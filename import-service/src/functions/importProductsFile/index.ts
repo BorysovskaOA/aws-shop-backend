@@ -1,10 +1,10 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { withCatchError } from "../../utils/withCatchError";
+import { withCatchError } from "common/utils/withCatchError";
 import {
   formatErrorResponse,
   formatSuccessResponse,
-} from "../../utils/formatResponse";
+} from "common/utils/formatResponse";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client } from "@aws-sdk/client-s3";
 

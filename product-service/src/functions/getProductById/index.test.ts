@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { it, describe, expect, vi, beforeEach } from "vitest";
 import { getProductById } from "./index";
-import { dynamoDBClient } from "product-service/src/common/dynamoDbClient";
+import { dynamoDBClient } from "common/dynamoDbClient";
 
 const product = {
   id: "99999999-9999-4999-9999-999999999999",
@@ -15,7 +15,7 @@ const stock = {
   count: 3,
 };
 
-vi.mock("../../common/dynamoDbClient", () => ({
+vi.mock("common/dynamoDbClient", () => ({
   dynamoDBClient: {
     send: vi.fn(),
   },

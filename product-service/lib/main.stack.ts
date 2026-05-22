@@ -10,7 +10,7 @@ import { ApiGatewayResources } from "./api-gateway-resources.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 if (!process.env.PRODUCTS_TABLE || !process.env.STOCKS_TABLE) {
   throw new Error("Cannot proceed without table names");

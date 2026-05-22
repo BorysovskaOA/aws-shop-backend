@@ -3,10 +3,10 @@ import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import {
   formatErrorResponse,
   formatSuccessResponse,
-} from "../../utils/formatResponse";
-import { withCatchError } from "../../utils/withCatchError.js";
-import { dynamoDBClient, Table } from "../../common/dynamoDbClient";
-import { Book, BookDB, BookInStockDB } from "../../interfaces";
+} from "common/utils/formatResponse";
+import { withCatchError } from "common/utils/withCatchError.js";
+import { dynamoDBClient, Table } from "common/dynamoDbClient";
+import { Book, BookDB, BookInStockDB } from "common/interfaces/book";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

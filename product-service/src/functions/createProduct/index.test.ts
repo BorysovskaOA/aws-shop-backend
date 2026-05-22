@@ -1,6 +1,5 @@
 import { it, describe, expect, vi, beforeEach } from "vitest";
 import { createProduct } from "./index";
-import { dynamoDBClient } from "product-service/src/common/dynamoDbClient";
 
 const createData = {
   title: "Mocked Book",
@@ -9,7 +8,7 @@ const createData = {
   count: 3,
 };
 
-vi.mock("../../common/dynamoDbClient", () => ({
+vi.mock("common/dynamoDbClient", () => ({
   dynamoDBClient: {
     send: vi.fn(),
   },

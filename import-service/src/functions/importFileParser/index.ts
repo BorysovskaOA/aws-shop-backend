@@ -5,17 +5,14 @@ import {
   CopyObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { Readable } from "node:stream";
 import csvParser from "csv-parser";
 import z from "zod";
+import { CreateProductSchema } from "common/schemas/create-product.schema";
 
 const s3Client = new S3Client();
-const CreateProductSchema = z.object({
-  title: z.string().min(3),
-  description: z.string().optional(),
-  price: z.coerce.number().int().positive(),
-  count: z.coerce.number().int().nonnegative().default(0),
-});
+const sqsClient = new SQSClient();
 
 export const importFileParser = async (event: S3Event) => {
   console.log("Import file parser", event);
@@ -47,9 +44,23 @@ export const importFileParser = async (event: S3Event) => {
             `Invalid product: ${JSON.stringify(z.treeifyError(validation.error).properties)}`,
           );
         }
-        // Currently just log that item - will be processed by next task
-        lines++;
-        console.log(`Line #${lines}:`, JSON.stringify(validation.data));
+
+        const command = new SendMessageCommand({
+          QueueUrl: process.env.QUEUE_URL,
+          MessageBody: JSON.stringify(validation.data),
+          MessageAttributes: {
+            SourceFile: {
+              DataType: "String",
+              StringValue: file,
+            },
+            Line: {
+              DataType: "Number",
+              StringValue: (lines++).toString(),
+            },
+          },
+        });
+
+        await sqsClient.send(command);
       }
 
       console.log(`Processed file: ${file} - ${lines} lines processed`);
