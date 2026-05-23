@@ -38,11 +38,19 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
       }),
     );
 
-    return { product: book, stock: bookInStock };
+    const snsCommand = new PublishCommand({
+      TopicArn: process.env.TOPIC_ARN,
+      Subject: `New product imported`,
+      Message: `Id: ${id}\nTitle: "${book.title}"\nDescription: ${book.description || "-"}\nPrice: $${book.price}\nQuantity: ${bookInStock.count}`,
+      MessageAttributes: {
+        price: {
+          DataType: "Number",
+          StringValue: `${book.price}`,
+        },
+      },
+    });
+    await snsClient.send(snsCommand);
   };
-
-  let successfullyCreatedProducts: { product: BookDB; stock: BookInStockDB }[] =
-    [];
 
   const results = await Promise.allSettled(
     event.Records.map((r) => processItem(r)),
@@ -52,37 +60,11 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
     console.log("All records processed");
   } else {
     results.forEach((r, i) => {
-      if (r.status === "fulfilled") {
-        successfullyCreatedProducts.push(r.value);
-      } else {
+      if (r.status !== "fulfilled") {
         console.log(r.reason);
         batchItemFailures.push({ itemIdentifier: event.Records[i].messageId });
       }
     });
   }
-
-  if (successfullyCreatedProducts.length) {
-    try {
-      const productLines = successfullyCreatedProducts.map(
-        (item) =>
-          `- Title: "${item.product.title}" | Price: $${item.product.price} | Qty: ${item.stock.count}`,
-      );
-
-      const summaryMessage =
-        `New products just created.\n\n` +
-        `Processed successfully: ${successfullyCreatedProducts.length}/${event.Records.length} items\n\n` +
-        `Products List:\n${productLines.join("\n")}`;
-
-      const snsCommand = new PublishCommand({
-        TopicArn: process.env.TOPIC_ARN,
-        Subject: `Alert: Batch of ${successfullyCreatedProducts.length} products created`,
-        Message: summaryMessage,
-      });
-      await snsClient.send(snsCommand);
-    } catch (snsError) {
-      console.error("Failed to send SNS alert:", snsError);
-    }
-  }
-
   return { batchItemFailures };
 };

@@ -18,7 +18,21 @@ export class SnsResources extends Construct {
       this,
       "/config/prod/alerts/admin-email",
     );
+    const expensiveProductEmail = ssm.StringParameter.valueForStringParameter(
+      this,
+      "/config/prod/alerts/expensive-product-email",
+    );
 
     this.topic.addSubscription(new subscriptions.EmailSubscription(adminEmail));
+
+    this.topic.addSubscription(
+      new subscriptions.EmailSubscription(expensiveProductEmail, {
+        filterPolicy: {
+          price: sns.SubscriptionFilter.numericFilter({
+            greaterThanOrEqualTo: 100,
+          }),
+        },
+      }),
+    );
   }
 }
