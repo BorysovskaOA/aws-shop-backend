@@ -1,6 +1,5 @@
 import { it, describe, expect, vi, beforeEach } from "vitest";
 import { createProduct } from "./index";
-import { dynamoDBClient } from "product-service/src/common/dynamoDbClient";
 
 const createData = {
   title: "Mocked Book",
@@ -9,7 +8,7 @@ const createData = {
   count: 3,
 };
 
-vi.mock("../../common/dynamoDbClient", () => ({
+vi.mock("common/dynamoDbClient", () => ({
   dynamoDBClient: {
     send: vi.fn(),
   },
@@ -68,7 +67,7 @@ describe("Create Product Handler", () => {
       body: JSON.stringify({
         title: 5,
         description: 4,
-        price: `${createData.price}`,
+        price: -10,
         count: -1,
       }),
     } as any;
@@ -82,7 +81,7 @@ describe("Create Product Handler", () => {
       description: {
         errors: ["Invalid input: expected string, received number"],
       },
-      price: { errors: ["Invalid input: expected number, received string"] },
+      price: { errors: ["Too small: expected number to be >0"] },
       count: { errors: ["Too small: expected number to be >=0"] },
     });
   });

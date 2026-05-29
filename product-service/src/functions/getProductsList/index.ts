@@ -1,8 +1,8 @@
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
-import { dynamoDBClient, Table } from "../../common/dynamoDbClient";
-import { formatSuccessResponse } from "../../utils/formatResponse";
-import { withCatchError } from "../../utils/withCatchError";
-import { Book, BookDB, BookInStockDB } from "../../interfaces";
+import { dynamoDBClient, Table } from "common/dynamoDbClient";
+import { formatSuccessResponse } from "common/utils/formatResponse";
+import { withCatchError } from "common/utils/withCatchError";
+import { Book, BookDB, BookInStockDB } from "common/interfaces/book";
 import { APIGatewayProxyEvent } from "aws-lambda";
 
 export const getProductsList = withCatchError(

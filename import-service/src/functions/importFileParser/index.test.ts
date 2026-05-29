@@ -9,8 +9,10 @@ import {
 import { importFileParser } from "./index";
 import { Readable } from "node:stream";
 import { S3Event } from "aws-lambda";
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
 const s3Mock = mockClient(S3Client);
+const sqsMock = mockClient(SQSClient);
 
 describe("importFileParser Lambda Handler", () => {
   beforeEach(() => {
@@ -22,8 +24,9 @@ describe("importFileParser Lambda Handler", () => {
     vi.unstubAllEnvs();
   });
 
-  it("should successfully parse a valid CSV stream, log lines, and move the file", async () => {
-    const mockCsv = "title,description,price,count\nTitle,Description,20,3\n";
+  it("should successfully parse a valid CSV and send messages", async () => {
+    const mockCsv =
+      "title,description,price,count\nTitle,Description,20,3\nTitle2,Description2,33,20\n";
     const mockStream = Readable.from([mockCsv]);
 
     s3Mock.on(GetObjectCommand).resolves({
@@ -31,6 +34,7 @@ describe("importFileParser Lambda Handler", () => {
     });
     s3Mock.on(CopyObjectCommand).resolves({});
     s3Mock.on(DeleteObjectCommand).resolves({});
+    sqsMock.on(SendMessageCommand).resolves({});
 
     const mockEvent = {
       Records: [
@@ -50,6 +54,20 @@ describe("importFileParser Lambda Handler", () => {
     }
 
     expect(s3Mock.commandCalls(GetObjectCommand)).toHaveLength(1);
+
+    const sqsCalls = sqsMock.commandCalls(SendMessageCommand);
+    expect(sqsCalls).toHaveLength(2);
+
+    const firstMsgBody = JSON.parse(
+      sqsCalls[0].args[0].input.MessageBody as string,
+    );
+    expect(firstMsgBody.title).toBe("Title");
+
+    const secondMsgBody = JSON.parse(
+      sqsCalls[1].args[0].input.MessageBody as string,
+    );
+    expect(secondMsgBody.title).toBe("Title2");
+
     expect(s3Mock.commandCalls(CopyObjectCommand)).toHaveLength(1);
     expect(s3Mock.commandCalls(DeleteObjectCommand)).toHaveLength(1);
 

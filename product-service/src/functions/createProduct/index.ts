@@ -1,24 +1,15 @@
-import { Book, BookDB, BookInStockDB } from "product-service/src/interfaces";
+import { Book, BookDB, BookInStockDB } from "common/interfaces/book";
 import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { z } from "zod";
-import crypto from "node:crypto";
-import {
-  dynamoDBClient,
-  Table,
-} from "product-service/src/common/dynamoDbClient";
-import { withCatchError } from "product-service/src/utils/withCatchError";
+import { randomUUID } from "node:crypto";
+import { dynamoDBClient, Table } from "common/dynamoDbClient";
+import { withCatchError } from "common/utils/withCatchError";
 import {
   formatErrorResponse,
   formatSuccessResponse,
-} from "product-service/src/utils/formatResponse";
-
-const CreateProductSchema = z.object({
-  title: z.string().min(3),
-  description: z.string().optional(),
-  price: z.number().int().positive(),
-  count: z.number().int().nonnegative().default(0),
-});
+} from "common/utils/formatResponse";
+import { CreateProductSchema } from "common/schemas/create-product.schema";
 
 export const createProduct = withCatchError(
   async (event: APIGatewayProxyEvent) => {
@@ -36,7 +27,7 @@ export const createProduct = withCatchError(
 
     const { title, description, price, count } = validation.data;
 
-    const id = crypto.randomUUID();
+    const id = randomUUID();
     const book: BookDB = { id, title, price, description };
     const bookInStock: BookInStockDB = { product_id: id, count: count || 0 };
 
