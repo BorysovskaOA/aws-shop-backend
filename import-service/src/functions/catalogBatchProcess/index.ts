@@ -10,7 +10,7 @@ import { CreateProductSchema } from "common/schemas/create-product.schema";
 const snsClient = new SNSClient();
 
 export const catalogBatchProcess = async (event: SQSEvent) => {
-  console.log("Canalog batch process", event);
+  console.log("Canalog batch process", JSON.stringify(event));
   const batchItemFailures: { itemIdentifier: string }[] = [];
 
   const processItem = async (record: SQSRecord) => {

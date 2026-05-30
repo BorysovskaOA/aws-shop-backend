@@ -12,6 +12,7 @@
     "diff": "npm run diff --workspaces --if-present"
   },
   "workspaces": [
+    "authorization-service",
     "import-service",
     "product-service"
   ]

@@ -7,7 +7,7 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 
 export const getProductsList = withCatchError(
   async (event: APIGatewayProxyEvent) => {
-    console.log("Get products list", event);
+    console.log("Get products list", JSON.stringify(event));
 
     const [productsResponse, stocksResponse] = await Promise.all([
       dynamoDBClient.send(new ScanCommand({ TableName: Table.Products })),
