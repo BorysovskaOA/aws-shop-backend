@@ -26,8 +26,11 @@ export class ImportServiceStack extends cdk.Stack {
       stocksTable: databaseLayer.stocksTable,
     });
 
+    const authorizerLambdaArn = cdk.Fn.importValue("SharedBasicAuthorizerArn");
+
     const apiGatewayLayer = new ApiGatewayResources(this, "ApiGatewayLayer", {
       importProductsFile: lambdaLayer.importProductsFile,
+      authorizerLambdaArn: authorizerLambdaArn,
     });
 
     new cdk.CfnOutput(this, "HttpApiUrl", {

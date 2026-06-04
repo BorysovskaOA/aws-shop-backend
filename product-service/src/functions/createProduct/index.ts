@@ -13,7 +13,7 @@ import { CreateProductSchema } from "common/schemas/create-product.schema";
 
 export const createProduct = withCatchError(
   async (event: APIGatewayProxyEvent) => {
-    console.log("Create product", event);
+    console.log("Create product", JSON.stringify(event));
 
     const body = JSON.parse(event.body || "{}");
 

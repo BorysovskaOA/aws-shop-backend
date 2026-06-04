@@ -15,7 +15,7 @@ const s3Client = new S3Client();
 const sqsClient = new SQSClient();
 
 export const importFileParser = async (event: S3Event) => {
-  console.log("Import file parser", event);
+  console.log("Import file parser", JSON.stringify(event));
 
   const processResource = async (record: S3EventRecord) => {
     const bucket = record.s3.bucket.name;

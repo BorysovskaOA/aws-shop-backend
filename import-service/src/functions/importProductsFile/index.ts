@@ -15,7 +15,7 @@ const SIGNED_URL_EXPIRES_IN_MS = 1000;
 
 export const importProductsFile = withCatchError(
   async (event: APIGatewayProxyEvent) => {
-    console.log("Import products file", event);
+    console.log("Import products file", JSON.stringify(event));
 
     const fileName = event.queryStringParameters?.name;
     if (!fileName || !fileName.endsWith(IMPORTED_FILE_EXTENTION)) {
